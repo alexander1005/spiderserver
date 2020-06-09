@@ -8,7 +8,6 @@ import java.io.InputStream;
 /**
  * 响应对象
  *
- * @author biezhi
  * @date 2018/1/11
  */
 public class Response {

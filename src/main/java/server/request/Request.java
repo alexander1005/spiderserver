@@ -9,7 +9,6 @@ import java.util.Map;
 /**
  * Request 请求
  *
- * @author biezhi
  * @date 2018/1/11
  */
 @Getter

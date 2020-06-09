@@ -13,7 +13,6 @@ import java.util.List;
  * <p>
  * 存储 Item 数据和新添加的 Request 列表
  *
- * @author biezhi
  * @date 2018/1/12
  */
 @Data
