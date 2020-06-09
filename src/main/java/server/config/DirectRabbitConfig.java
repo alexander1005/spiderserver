@@ -16,13 +16,24 @@ public class DirectRabbitConfig {
   }
 
   @Bean
-  public Queue spiderQueue() {
-    return new Queue("spider");
+  public Queue smzdmQueue() {
+    return new Queue("smzdm");
+  }
+
+  @Bean
+  public Queue jdQueue() {
+    return new Queue("jd");
   }
 
   @Bean
   Binding bindingExchangeMessage() {
-    return BindingBuilder.bind(spiderQueue()).to(exchange()).with("spider");
+    return BindingBuilder.bind(smzdmQueue()).to(exchange()).with("smzdm");
   }
+
+  @Bean
+  Binding bindingExchangeMessage1() {
+    return BindingBuilder.bind(jdQueue()).to(exchange()).with("jd");
+  }
+
 
 }
