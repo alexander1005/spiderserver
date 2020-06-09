@@ -60,7 +60,6 @@ public class SmzdmSpiderImpl extends Spider {
 
     for (Element element : elements) {
       Model model = new Model();
-      System.out.println(element);
       Elements select = element.select("a[href]");
       String url = start + select.attr("href");
       String title = element.select("a[href]").select(".zm-card-title").text();
