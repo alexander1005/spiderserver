@@ -1,0 +1,23 @@
+server:
+  port: 9996
+spring:
+  application:
+    name: ltzSpider
+  cloud:
+    config:
+      enabled: true
+      profile: dev
+      label: master
+      discovery:
+        enabled: true
+        service-id: LTZCONFIG
+eureka:
+  instance:
+    prefer-ip-address: true
+    instance-id: 192.168.50.221:9996
+  client:
+    service-url:
+      defaultZone: http://liaotianzheng.com:9998/eureka/
+security:
+  basic:
+    enabled: false
