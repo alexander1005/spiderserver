@@ -5,10 +5,12 @@ import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.ComponentScans;
 
 @SpringBootConfiguration
 @EnableAutoConfiguration
 @EnableDiscoveryClient
+@ComponentScan("server")
 public class SpiderServerApp {
 
   public static void main(String[] args) {

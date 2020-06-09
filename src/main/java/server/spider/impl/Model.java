@@ -2,12 +2,16 @@ package server.spider.impl;
 
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.Date;
 
 @Data
-public class Model {
+public class Model implements Serializable {
+
   private Integer id;
+
   private String sourceId;
+
   private String name;
   // 型号
   private String model;

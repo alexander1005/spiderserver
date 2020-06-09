@@ -1,5 +1,6 @@
 package server.engine;
-import	java.util.Random;
+
+import java.util.Random;
 
 
 import org.assertj.core.util.Lists;
@@ -25,7 +26,7 @@ public class SpiderEngine {
   // 配置
   private Config config;
   // 爬虫列表
-  private List<Spider> spiders;
+  private List<Spider> spiders = Lists.newArrayList();
   // 是否运行
   private boolean isRunning;
   // 调度器 观察者模式
@@ -44,9 +45,9 @@ public class SpiderEngine {
             : new LinkedBlockingQueue<>(config.queueSize())), ((ThreadFactory) Thread::new));
   }
 
-  public void addSpider(Spider spider){
-    if (null == this.spiders){
-      this. spiders = Lists.newArrayList();
+  public void addSpider(Spider spider) {
+    if (null == this.spiders) {
+      this.spiders = Lists.newArrayList();
     }
     spiders.add(spider);
   }
@@ -59,33 +60,16 @@ public class SpiderEngine {
     this.isRunning = true;
     // 将配置放入事件
     EventManager.fireEvent(Event.GLOBAL_STARTED, config);
-
-    // 启动
-    spiders.forEach(spider -> {
-
-      // 获取配置
-      Config conf = config.clone();
-      // 注册 Onstart
-      EventManager.fireEvent(Event.SPIDER_STARTED, conf);
-      // 设置配置
-      spider.setConfig(config);
-      // 构造请求数据流
-      List<Request> requests = spider.getStartUrls().stream().map(spider::makeRequest).collect(Collectors.toList());
-      // 设置所有请求
-      spider.setRequests(requests);
-      scheduler.addRequests(requests);
-    });
-
     // 启动下载器
     Thread downloader = new Thread(() -> {
       while (isRunning) {
-        if (!scheduler.hasRequest()){
+        if (!scheduler.hasRequest()) {
           this.sleepThread(100);
           continue;
         }
         //提交
         Request request = scheduler.nextRequest();
-        executorService.submit(new Downloader(scheduler,request));
+        executorService.submit(new Downloader(scheduler, request));
         this.sleepThread(new Random().nextInt(10000));
       }
     }, "download");
@@ -100,22 +84,41 @@ public class SpiderEngine {
   private void complete() {
 
     while (isRunning) {
+
+      // 启动
+      spiders.forEach(spider -> {
+
+        // 获取配置
+        Config conf = config.clone();
+        // 注册 Onstart
+        EventManager.fireEvent(Event.SPIDER_STARTED, conf);
+        // 设置配置
+        spider.setConfig(config);
+        // 构造请求数据流
+        List<Request> requests = spider.getStartUrls().stream().map(spider::makeRequest).collect(Collectors.toList());
+        // 设置所有请求
+        spider.setRequests(requests);
+        scheduler.addRequests(requests);
+      });
+      if (!CollectionUtils.isEmpty(spiders)) {
+        spiders.clear();
+      }
       if (!scheduler.hasResponse()) {
         sleepThread(100);
         continue;
       }
       Response response = scheduler.nextResponse();
       Parser parser = response.getRequest().getParser();
-      if (null != parser){
+      if (null != parser) {
 
-        Result<?>   result = parser.parse(response);
+        Result<?> result = parser.parse(response);
         List<Request> requests = result.getRequests();
-        if (!CollectionUtils.isEmpty(requests)){
+        if (!CollectionUtils.isEmpty(requests)) {
           requests.forEach(scheduler::addRequest);
         }
 
-        if (null != result.getItem()){
-          response.getRequest().getSpider().getPipelines().forEach(p->p.process(result.getItem(),response.getRequest()));
+        if (null != result.getItem()) {
+          response.getRequest().getSpider().getPipelines().forEach(p -> p.process(result.getItem(), response.getRequest()));
         }
       }
     }
@@ -123,14 +126,15 @@ public class SpiderEngine {
   }
 
 
-  public void  sleepThread(Integer time){
+  public void sleepThread(Integer time) {
     try {
       Thread.sleep(time);
     } catch (InterruptedException e) {
       e.printStackTrace();
     }
   }
-  public void stop(){
+
+  public void stop() {
     isRunning = false;
     scheduler.clear();
   }

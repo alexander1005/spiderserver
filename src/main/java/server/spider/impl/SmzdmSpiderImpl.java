@@ -3,10 +3,15 @@ import	java.text.SimpleDateFormat;
 
 import org.assertj.core.util.Lists;
 import org.jsoup.select.Elements;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.web.context.support.WebApplicationContextUtils;
 import server.config.Config;
 import server.response.Response;
 import server.response.Result;
 import server.spider.Spider;
+import server.util.SpringUtil;
 import us.codecraft.xsoup.XElements;
 import org.jsoup.nodes.Element;
 
@@ -39,8 +44,8 @@ public class SmzdmSpiderImpl extends Spider {
         "https://search.m.smzdm.com/?s=" + searchKey + "&source=hot_keyword&v=b&p=5&order=time"
     );
     this.addPipeline((item, request) -> {
-      System.out.println(item);
-      System.out.println(request);
+      RabbitTemplate rabbitTemplate = SpringUtil.getBean(RabbitTemplate.class);
+      rabbitTemplate.convertAndSend("topicExchange","smzdm",item);
     });
   }
 
