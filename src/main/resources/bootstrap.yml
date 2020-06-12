@@ -25,7 +25,10 @@ spring:
 eureka:
   instance:
     prefer-ip-address: true
-    instance-id: 192.168.50.221:9996
+    ip-address: 192.168.50.221
+    instance-id: ${spring.application.name}:${server.port}
   client:
+    registerWithEureka: true #服务注册开关
+    fetchRegistry: true #服务发现开关
     service-url:
       defaultZone: http://liaotianzheng.com:9998/eureka/

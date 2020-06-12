@@ -1,5 +1,6 @@
 package server;
 
+import org.springframework.amqp.rabbit.annotation.EnableRabbit;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -10,6 +11,7 @@ import org.springframework.context.annotation.ComponentScans;
 @SpringBootConfiguration
 @EnableAutoConfiguration
 @EnableDiscoveryClient
+@EnableRabbit
 @ComponentScan("server")
 public class SpiderServerApp {
 
